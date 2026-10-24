@@ -222,6 +222,7 @@ a {
   align-items: center;
   justify-content: space-between;
   height: 68px;
+  background: transparent;
 }
 
 .brand-logo-wrap {
@@ -284,6 +285,34 @@ a {
   box-shadow: 0 0 10px rgba(230, 30, 42, 0.8);
 }
 
+.nav-link-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  background: var(--red-primary);
+  border: 1px solid var(--red-bright);
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: var(--transition-fast);
+}
+
+.nav-link-cta:hover {
+  background: var(--red-bright);
+  border-color: var(--red-primary);
+  color: #ffffff;
+}
+
+.nav-link-cta:focus-visible,
+.mobile-dropdown-check-car:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
 .nav-cta-clean {
   display: flex;
   align-items: center;
@@ -341,6 +370,10 @@ a {
   display: none;
   align-items: center;
   gap: 0.85rem;
+}
+
+.mobile-header-actions .nav-link-cta {
+  display: none;
 }
 
 .mobile-insta-btn {
@@ -474,23 +507,24 @@ a {
    =================================================== */
 .hero-ref-wrapper {
   position: relative;
-  min-height: 88vh;
+  min-height: clamp(560px, 88vh, 820px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: 
-    linear-gradient(180deg, rgba(0, 0, 0, 0.82) 0%, rgba(7, 7, 9, 0.35) 40%, rgba(7, 7, 9, 0.65) 70%, #070709 100%),
-    url('/images/hero-car.jpg') center 70% / cover no-repeat;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.76) 0%, rgba(7, 7, 9, 0.42) 42%, rgba(7, 7, 9, 0.72) 78%, #070709 100%),
+    url('/images/workshop.jpg') center 62% / cover no-repeat;
   padding: 5rem 1.5rem 3.5rem;
   overflow: hidden;
   box-shadow: inset 0 -40px 60px #070709;
 }
 
 .hero-ref-center {
+  width: 100%;
   max-width: 980px;
-  margin: auto 0;
+  margin: 0 auto;
   padding: 2rem 0;
   z-index: 5;
 }
@@ -501,6 +535,7 @@ a {
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
+  
   color: #ffffff;
   margin-bottom: 1.25rem;
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.85);
@@ -531,12 +566,12 @@ a {
 .hero-ref-desc {
   font-size: clamp(0.95rem, 1.8vw, 1.15rem);
   font-family: var(--font-body);
-  font-weight: 300;
-  color: #e5e7eb;
-  max-width: 820px;
+  font-weight: 400;
+  color: #ffffff;
+  max-width: 920px;
   margin: 0 auto 0.85rem;
   line-height: 1.65;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
 }
 
 .hero-ref-subchips {
@@ -546,14 +581,14 @@ a {
   flex-wrap: wrap;
   gap: 0.65rem;
   font-size: 0.86rem;
-  color: #9ca3af;
+  color: #e5e7eb;
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   margin-bottom: 2.5rem;
 }
 
 .hero-ref-subchips span.highlight {
-  color: #ff9da4;
+  color: var(--red-bright);
   font-weight: 500;
 }
 
@@ -750,7 +785,7 @@ a {
 }
 
 .pillar-card {
-  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(14, 14, 18, 0.95) 100%);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(76, 76, 105, 0.95) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 2.25rem 1.75rem;
@@ -774,7 +809,7 @@ a {
 .pillar-card:hover {
   transform: translateY(-5px);
   border-color: var(--border-glow);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(230, 30, 42, 0.18);
+  box-shadow: 0 15px 35px rgba(247, 239, 239, 0.6), 0 0 25px rgba(230, 30, 42, 0.18);
 }
 
 .pillar-card:hover::before {
@@ -1315,6 +1350,19 @@ a {
 
 /* Responsive Media Queries */
 @media (max-width: 1024px) {
+  .nav-links,
+  .nav-cta-clean {
+    display: none;
+  }
+
+  .mobile-header-actions {
+    display: flex;
+  }
+
+  .mobile-header-actions .nav-link-cta {
+    display: inline-flex;
+  }
+
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -1373,16 +1421,16 @@ a {
 
   /* Hero Banner Proper Mobile Placement & Scaled Typography */
   .hero-ref-wrapper {
-    min-height: 82vh;
-    padding: 4rem 1rem 3rem;
-    background: 
-      linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0.75) 75%, #070709 100%),
-      url('/images/hero-car.jpg') center 85% / cover no-repeat;
+    min-height: clamp(560px, 80svh, 760px);
+    padding: 3rem 1rem;
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 0.78) 78%, #070709 100%),
+      url('/images/workshop.jpg') center 58% / cover no-repeat;
     justify-content: center;
   }
 
   .hero-ref-center {
-    padding: 1.5rem 0 1rem;
+    padding: 1rem 0;
     width: 100%;
   }
 

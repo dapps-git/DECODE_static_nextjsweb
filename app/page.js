@@ -175,56 +175,18 @@ export default function HomePage() {
 
   return (
     <div className="page-wrapper">
-      {/* Top Red Ticker with Continuous Train Animation - Clean Sans-Serif, No Dots */}
-      <div className="top-train-ticker">
-        <div className="train-track">
-          <span className="train-item">
-            <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
-          </span>
-          <span className="train-item">
-            <Phone size={12} />
-            <span>+91 95673 86024</span>
-          </span>
-          <span className="train-item">
-            <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
-          </span>
-          <span className="train-item">
-            <Phone size={12} />
-            <span>9567386024</span>
-          </span>
-
-          {/* Repeat for seamless infinite train animation loop */}
-          <span className="train-item">
-            <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
-          </span>
-          <span className="train-item">
-            <Phone size={12} />
-            <span>+91 95673 86024</span>
-          </span>
-          <span className="train-item">
-            <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
-          </span>
-          <span className="train-item">
-            <Phone size={12} />
-            <span>9567386024</span>
-          </span>
-        </div>
-      </div>
+    
 
       {/* Navigation Header - Solid Black */}
       <header className={`navbar ${scrolled ? 'navbar-scrolled' : 'navbar-transparent'}`}>
         <div className="container nav-inner">
           <a href="#" className="brand-logo-wrap" title="DECODE AUTO DIAGNOSING HUB">
-            <div className="logo-img-wrapper">
+            <div className="logo-img-wrapper  ">
               <Image
                 src="/images/logo.png"
                 alt="DECODE Logo"
-                width={58}
-                height={46}
+                width={68}
+                height={45}
                 style={{ objectFit: 'contain' }}
                 priority
               />
@@ -238,6 +200,7 @@ export default function HomePage() {
             <a href="#services" className="nav-link">Services</a>
             <a href="#workshop" className="nav-link">Workshop</a>
             <a href="#location" className="nav-link">Location &amp; Contact</a>
+            <a href="#location" className="nav-link-cta">Check Car</a>
           </nav>
 
           {/* Right Header CTA: Direct Phone */}
@@ -250,6 +213,13 @@ export default function HomePage() {
 
           {/* Mobile Right Bar: Hamburger Toggle */}
           <div className="mobile-header-actions">
+            <a
+              href="#location"
+              onClick={() => setMobileMenuOpen(false)}
+              className="nav-link-cta"
+            >
+              Check Car
+            </a>
             <button
               className="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
