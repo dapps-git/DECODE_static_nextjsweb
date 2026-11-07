@@ -21,29 +21,39 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/cars', carRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/users', userRoutes);
+// Routes (Support both direct /api and cPanel /decode_car/api mount paths)
+const apiRoutes = [
+  { path: '/auth', router: authRoutes },
+  { path: '/customers', router: customerRoutes },
+  { path: '/cars', router: carRoutes },
+  { path: '/services', router: serviceRoutes },
+  { path: '/users', router: userRoutes },
+];
+
+apiRoutes.forEach(({ path, router }) => {
+  app.use(`/api${path}`, router);
+  app.use(`/decode_car/api${path}`, router);
+});
 
 // Root health check & cPanel Passenger ping check
-app.get('/', (req, res) => {
+const healthResponse = (req, res) => {
   res.status(200).send('DECODE Backend API is running successfully.');
-});
+};
 
-app.get('/decode_car', (req, res) => {
-  res.status(200).send('DECODE Backend API is running successfully.');
-});
+app.get('/', healthResponse);
+app.get('/decode_car', healthResponse);
+app.get('/decode_car/', healthResponse);
 
-app.get('/api/health', (req, res) => {
+const apiHealthHandler = (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date(),
     service: 'DECODE Car Service Center Management API',
   });
-});
+};
+
+app.get('/api/health', apiHealthHandler);
+app.get('/decode_car/api/health', apiHealthHandler);
 
 // Database Connection with graceful fallback to MongoMemoryServer
 async function connectDB() {
