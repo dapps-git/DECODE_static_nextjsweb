@@ -5,19 +5,15 @@ const CARS_KEY = 'autocare_cars';
 const SERVICES_KEY = 'autocare_services';
 const USERS_KEY = 'autocare_users';
 
-// Initialize storage if empty
+// Purge any legacy dummy mock customers from localStorage if present
 const initStorage = () => {
-  if (!localStorage.getItem(CUSTOMERS_KEY)) {
-    localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(initialCustomers));
-  }
-  if (!localStorage.getItem(CARS_KEY)) {
-    localStorage.setItem(CARS_KEY, JSON.stringify(initialCars));
-  }
-  if (!localStorage.getItem(SERVICES_KEY)) {
-    localStorage.setItem(SERVICES_KEY, JSON.stringify(initialServices));
-  }
-  if (!localStorage.getItem(USERS_KEY)) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(initialUsers));
+  const dummyNames = ['John Mathew', 'Sarah Jenkins', 'Vikramaditya Roy', 'Priya Nambiar'];
+  const existingCustomers = JSON.parse(localStorage.getItem(CUSTOMERS_KEY) || '[]');
+  const cleanedCustomers = existingCustomers.filter((c) => !dummyNames.includes(c.name));
+  if (cleanedCustomers.length !== existingCustomers.length) {
+    localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(cleanedCustomers));
+    localStorage.removeItem(CARS_KEY);
+    localStorage.removeItem(SERVICES_KEY);
   }
 };
 
