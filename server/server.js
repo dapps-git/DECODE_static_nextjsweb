@@ -28,7 +28,15 @@ app.use('/api/cars', carRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/users', userRoutes);
 
-// Root health check
+// Root health check & cPanel Passenger ping check
+app.get('/', (req, res) => {
+  res.status(200).send('DECODE Backend API is running successfully.');
+});
+
+app.get('/decode_car', (req, res) => {
+  res.status(200).send('DECODE Backend API is running successfully.');
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
