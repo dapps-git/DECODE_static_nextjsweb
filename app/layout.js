@@ -1,13 +1,13 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'DECODE AUTO DIAGNOSING HUB | German & European Premium Vehicles | Mampad',
+  title: 'DECODE AUTO DIAGNOSING HUB | Mampad, PIN: 676542 | PH: 9567386024',
   description:
-    'Exclusively for German & European Premium Vehicles in Mampad, Edakkara-Kalasagar. Expert auto electrical, auto scanning, car AC service, vehicle programming & coding.',
+    'DECODE AUTO DIAGNOSING HUB, Mampad (PIN 676542, PH: 9567386024). Exclusively for German & European Premium Vehicles. Advanced Electrical, Mechanical, AC, PMS, Performance, Accessories, Used Spares, and Digital Service History.',
   keywords: [
     'Decode Auto Diagnosing Hub',
     'German car repair Mampad',
-    'European car specialist Edakkara',
+    'Mampad 676542',
     'BMW Audi Mercedes Porsche coding',
     'Auto electrical',
     'Auto scanning',
@@ -15,10 +15,10 @@ export const metadata = {
     'Kerala European car workshop',
   ],
   openGraph: {
-    title: 'DECODE AUTO DIAGNOSING HUB | Mampad, Edakkara',
+    title: 'DECODE AUTO DIAGNOSING HUB | Mampad PIN 676542',
     description:
-      'Exclusively for German & European Premium Vehicles. Auto Electrical, Auto Scanning & Coding, Car AC Service.',
-    images: ['/images/workshop.jpg'],
+      'Exclusively for German & European Premium Vehicles in Mampad, PIN Code: 676542. Call 9567386024.',
+    images: ['/images/hero-building.jpg'],
     type: 'website',
   },
   icons: {
@@ -28,7 +28,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#070709',
+  themeColor: '#ffffff',
   width: 'device-width',
   initialScale: 1,
 };

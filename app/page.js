@@ -24,11 +24,25 @@ import {
   Navigation,
   Truck,
   Sparkles,
+  Search,
+  Loader2,
+  RotateCcw,
+  Gauge,
+  Layers,
+  FileText,
 } from 'lucide-react';
 
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Check Car Tracker States
+  const [checkCarOpen, setCheckCarOpen] = useState(false);
+  const [carRegInput, setCarRegInput] = useState('');
+  const [carData, setCarData] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [searchedPlate, setSearchedPlate] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,61 +115,176 @@ export default function HomePage() {
   const services = [
     {
       num: '01',
-      title: 'Vehicle Programming & Coding',
-      icon: <Cpu size={24} />,
-      desc: 'OEM dealer-level flashing, retrofits, ECU/TCU adaptation, key matching, and feature unlocks for BMW, Mercedes, Audi, Porsche, and VW.',
-      highlights: ['ECU / TCU software updates', 'Hidden features activation', 'Module adaptations'],
+      title: 'Advanced Electrical & Diagnostics',
+      icon: <Zap size={24} />,
+      desc: 'Advanced electrical and electronic solutions featuring OEM-level diagnostic scanning, ECU coding, and CAN bus network troubleshooting for German luxury vehicles.',
+      highlights: [
+        'OEM-level diagnostic scanning',
+        'ECU coding & flash updates',
+        'CAN bus network troubleshooting',
+      ],
     },
     {
       num: '02',
-      title: 'Expert Electrical & Electronic Diagnosis',
-      icon: <Zap size={24} />,
-      desc: 'Pinpoint troubleshooting of parasitic battery drains, CAN bus communication errors, sensor faults, immobilizer issues, and lighting modules.',
-      highlights: ['CAN-Bus network diagnosis', 'Parasitic battery drain testing', 'Alternator & starter systems'],
+      title: 'Mechanical Care & Engine Works',
+      icon: <Wrench size={24} />,
+      desc: 'Comprehensive mechanical services for German V6 and inline engines, featuring engine overhauls, turbocharger repairs, suspension and air suspension calibration, brake system overhauls, and timing chain replacements.',
+      highlights: [
+        'Engine overhauls & timing chains',
+        'Turbocharger repairs & calibration',
+        'Brake & air suspension calibration',
+      ],
     },
     {
       num: '03',
-      title: 'Comprehensive Vehicle Inspection',
-      icon: <ShieldCheck size={24} />,
-      desc: 'Rigorous multi-point European standard mechanical and electronic health audits prior to long road trips, pre-purchase, or track days.',
-      highlights: ['Live sensor data evaluation', 'Subframe & suspension scan', 'Underbody & fluid check'],
+      title: 'AC & Climate Control',
+      icon: <Wind size={24} />,
+      desc: 'Expert climate control services including AC compressor repair, module diagnosis, evaporator coil cleaning, leak testing, and gas refilling for luxury vehicles.',
+      highlights: [
+        'AC compressor repair & overhaul',
+        'Evaporator coil cleaning & leak testing',
+        'Module diagnosis & gas refilling',
+      ],
     },
     {
       num: '04',
-      title: 'Specialized Automotive AC & Cooling System',
-      icon: <Wind size={24} />,
-      desc: 'Advanced air conditioning diagnostics, evaporator replacements, radiator flushing, and electronic climate control module repair.',
-      highlights: ['R134a/R1234yf vacuum recharge', 'HVAC flap motor repair', 'Thermostat & water pump testing'],
+      title: 'Periodic Maintenance Service (PMS)',
+      icon: <Sliders size={24} />,
+      desc: 'Precise periodic maintenance services featuring premium synthetic oils (Liqui Moly, Mobil 1, Shell, Castrol), Ceratec additives, and a comprehensive multi-point vehicle health check.',
+      highlights: [
+        'Liqui Moly, Mobil 1, Shell, Castrol',
+        'Ceratec engine friction additives',
+        'Multi-point vehicle health check',
+      ],
     },
     {
       num: '05',
-      title: 'Premium Genuine Used Spares',
-      icon: <Wrench size={24} />,
-      desc: 'High-quality tested and verified OEM used replacement parts, body control units, steering racks, headlamps, and powertrain components.',
-      highlights: ['Tested OEM components', 'Cost-effective premium spares', 'Fitment warranty'],
+      title: 'Performance & Upgrades',
+      icon: <Gauge size={24} />,
+      desc: 'Advanced performance tuning, ECU remapping, and custom exhaust system upgrades to optimize vehicle power and driving dynamics.',
+      highlights: [
+        'Advanced performance ECU remapping',
+        'Custom exhaust system upgrades',
+        'Vehicle power & driving dynamics optimization',
+      ],
     },
     {
       num: '06',
-      title: 'Periodical Maintenance & Mechanical Repairs',
-      icon: <Sliders size={24} />,
-      desc: 'Scheduled interval service following factory European checklists, Liqui Moly / Motul high-grade synthetic lubricants, and suspension rebuilds.',
-      highlights: ['Euro-spec synthetic oils', 'Brembo & OEM brake care', 'Transmission fluid flush'],
+      title: 'Accessories & Upgrades',
+      icon: <ShieldCheck size={24} />,
+      desc: 'Custom performance upgrades including brake and shock absorber enhancements, along with on-demand installations of premium Android screens, dash cams, and automotive accessories based on customer inquiry.',
+      highlights: [
+        'Brake & shock absorber enhancements',
+        'Premium Android screens & dash cams',
+        'Custom luxury accessories on demand',
+      ],
     },
     {
       num: '07',
-      title: 'Convenient Vehicle Pick & Drop Service',
-      icon: <Car size={24} />,
-      desc: 'Hassle-free insured transport service to collect your European vehicle directly from your home or office and deliver it back post-service.',
-      highlights: ['Insured transit', 'Real-time updates', 'Doorstep pickup in Mampad & Nilambur'],
+      title: 'Used Spares Sourcing & Fitting',
+      icon: <Layers size={24} />,
+      desc: 'Sourcing and procurement of quality-checked used spare parts for all German and European luxury vehicles based on customer inquiry, complete with expert installation and fitting at our workshop.',
+      highlights: [
+        'Quality-checked OEM used spare parts',
+        'Sourcing on customer inquiry',
+        'Expert workshop fitting & installation',
+      ],
     },
     {
       num: '08',
-      title: 'Roadside Assistance & Breakdown Support',
-      icon: <Truck size={24} />,
-      desc: 'Emergency on-spot diagnostic support, jump-starts, electrical lockouts, and flatbed towing coordination across Malappuram & surrounding zones.',
-      highlights: ['On-site scanning', 'Emergency tow dispatch', 'Fast roadside response'],
+      title: 'Digital Service History & Reminders',
+      icon: <FileText size={24} />,
+      desc: "Complete digital service records for all vehicles serviced at DECODE. Customers can easily check their vehicle's entire service history and upcoming maintenance schedules anytime through the 'Vehicle Checkup' option on our website.",
+      highlights: [
+        'Complete digital service records',
+        'Upcoming maintenance schedules',
+        'Instant online vehicle checkup',
+      ],
+      isCheckupAction: true,
     },
   ];
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const s = (status || 'Ready').toLowerCase();
+    if (s === 'in service') {
+      return (
+        <span className="status-pill-badge status-in-service">
+          <span className="status-dot-pulse" />
+          In Service
+        </span>
+      );
+    }
+    if (s === 'pending') {
+      return (
+        <span className="status-pill-badge status-pending">
+          <span className="status-dot-pulse" />
+          Pending / In Queue
+        </span>
+      );
+    }
+    if (s === 'completed' || s === 'ready') {
+      return (
+        <span className="status-pill-badge status-completed">
+          <span className="status-dot-pulse" />
+          {status}
+        </span>
+      );
+    }
+    return (
+      <span className="status-pill-badge status-delivered">
+        <CheckCircle2 size={13} />
+        {status || 'Delivered'}
+      </span>
+    );
+  };
+
+  const handleCheckCar = async (plateToSearch) => {
+    const regToUse = (typeof plateToSearch === 'string' ? plateToSearch : carRegInput).trim();
+    if (!regToUse) {
+      setSearchError('Please enter a vehicle registration number (e.g. KL 10 AB 1234)');
+      return;
+    }
+
+    setSearchLoading(true);
+    setSearchError(null);
+
+    try {
+      const res = await fetch(`/api/check-car?reg=${encodeURIComponent(regToUse)}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setCarData(null);
+        setSearchError(data.message || `No records found for "${regToUse.toUpperCase()}".`);
+      } else {
+        setCarData(data);
+        setSearchedPlate(regToUse.toUpperCase());
+        setCarRegInput(regToUse.toUpperCase());
+        setSearchError(null);
+        setTimeout(() => {
+          document.getElementById('check-car-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+      }
+    } catch (err) {
+      console.error('Error checking car status:', err);
+      setSearchError('Connection to server failed. Please check your network or try again.');
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   const handleWhatsAppBooking = (e) => {
     e.preventDefault();
@@ -180,70 +309,76 @@ export default function HomePage() {
         <div className="train-track">
           <span className="train-item">
             <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
+            <span>Mampad, PIN Code: 676542</span>
+          </span>
+          <span className="train-item">
+            <Phone size={12} />
+            <span>PH: 9567386024</span>
+          </span>
+          <span className="train-item">
+            <MapPin size={12} />
+            <span>DECODE AUTO DIAGNOSING HUB — Mampad</span>
           </span>
           <span className="train-item">
             <Phone size={12} />
             <span>+91 95673 86024</span>
-          </span>
-          <span className="train-item">
-            <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
-          </span>
-          <span className="train-item">
-            <Phone size={12} />
-            <span>9567386024</span>
           </span>
 
           {/* Repeat for seamless infinite train animation loop */}
           <span className="train-item">
             <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
+            <span>Mampad, PIN Code: 676542</span>
+          </span>
+          <span className="train-item">
+            <Phone size={12} />
+            <span>PH: 9567386024</span>
+          </span>
+          <span className="train-item">
+            <MapPin size={12} />
+            <span>DECODE AUTO DIAGNOSING HUB — Mampad</span>
           </span>
           <span className="train-item">
             <Phone size={12} />
             <span>+91 95673 86024</span>
           </span>
-          <span className="train-item">
-            <MapPin size={12} />
-            <span>Mampad, Edakkara-Kalasagar</span>
-          </span>
-          <span className="train-item">
-            <Phone size={12} />
-            <span>9567386024</span>
-          </span>
         </div>
       </div>
 
-      {/* Navigation Header - Solid Black */}
+      {/* Navigation Header - Sleek Luxury Black */}
       <header className={`navbar ${scrolled ? 'navbar-scrolled' : 'navbar-transparent'}`}>
         <div className="container nav-inner">
-          <a href="#" className="brand-logo-wrap" title="DECODE AUTO DIAGNOSING HUB">
-            <div className="logo-img-wrapper">
-              <Image
-                src="/images/logo.png"
-                alt="DECODE Logo"
-                width={58}
-                height={46}
-                style={{ objectFit: 'contain' }}
-                priority
-              />
-            </div>
+          <a href="#" className="brand-logo-wrap" title="DECODE Auto Diagnosing Hub">
+            <Image
+              src="/images/logo.png"
+              alt="DECODE Logo"
+              width={46}
+              height={36}
+              style={{ objectFit: 'contain' }}
+              priority
+            />
           </a>
 
           {/* Desktop Nav Links */}
           <nav className="nav-links">
             <a href="#" className="nav-link active">Home</a>
+            <button
+              type="button"
+              onClick={() => setCheckCarOpen(true)}
+              className="nav-link"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--red-bright)', fontWeight: 600 }}
+            >
+              Check Car
+            </button>
             <a href="#specialties" className="nav-link">Specialties</a>
             <a href="#services" className="nav-link">Services</a>
             <a href="#workshop" className="nav-link">Workshop</a>
-            <a href="#location" className="nav-link">Location &amp; Contact</a>
+            <a href="#location" className="nav-link">Contact</a>
           </nav>
 
           {/* Right Header CTA: Direct Phone */}
           <div className="nav-cta-clean">
             <a href={`tel:${phoneNumber}`} className="nav-phone-raw">
-              <Phone size={13} color="var(--red-bright)" />
+              <Phone size={12} color="var(--red-bright)" />
               <span>{displayPhone}</span>
             </a>
           </div>
@@ -255,7 +390,7 @@ export default function HomePage() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -264,16 +399,37 @@ export default function HomePage() {
         {mobileMenuOpen && (
           <div className="mobile-dropdown-panel">
             <a href="#" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--red-bright)', fontWeight: 600 }}>Home</a>
-            <a href="#specialties" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fff', fontWeight: 500 }}>Specialties</a>
-            <a href="#services" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fff', fontWeight: 500 }}>Services</a>
-            <a href="#workshop" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fff', fontWeight: 500 }}>The Workshop</a>
-            <a href="#location" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fff', fontWeight: 500 }}>Location &amp; Contact</a>
+            <button
+              type="button"
+              onClick={() => {
+                setCheckCarOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--red-bright)',
+                fontWeight: 700,
+                textAlign: 'left',
+                padding: 0,
+                fontSize: '0.82rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+              }}
+            >
+              🚗 Check Car Status
+            </button>
+            <a href="#specialties" onClick={() => setMobileMenuOpen(false)}>Specialties</a>
+            <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
+            <a href="#workshop" onClick={() => setMobileMenuOpen(false)}>The Workshop</a>
+            <a href="#location" onClick={() => setMobileMenuOpen(false)}>Contact</a>
             <a
               href={`tel:${phoneNumber}`}
               onClick={() => setMobileMenuOpen(false)}
               className="mobile-dropdown-phone"
             >
-              <Phone size={16} color="var(--red-bright)" />
+              <Phone size={14} color="var(--red-bright)" />
               <span>Call: {displayPhone}</span>
             </a>
           </div>
@@ -283,27 +439,35 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="hero-ref-wrapper" id="home">
         <div className="hero-ref-center">
-          <h1 className="hero-ref-title">
-            <span className="hero-accent-word">DECODE</span>{' '}
-            <span className="hero-ref-title-sub">AUTO DIAGNOSING HUB</span>
-          </h1>
+          <h1 className="sr-only">DECODE AUTO DIAGNOSING HUB — German &amp; European Specialists</h1>
 
-          <p className="hero-ref-desc">
-            Exclusively for German &amp; European Premium Vehicles — Mampad, Edakkara-Kalasagar
-          </p>
-
-          <div className="hero-ref-subchips">
-            <span className="highlight">Auto Electrical</span>
-            <span className="dot-sep">•</span>
-            <span>Auto Scanning &amp; Coding</span>
-            <span className="dot-sep">•</span>
-            <span>Car AC Service</span>
-            <span className="dot-sep">•</span>
-            <span className="highlight">🏁 German &amp; European Specialists</span>
+          <div className="hero-mobile-text-wrap">
+            <p className="hero-ref-desc">
+              Exclusively for German &amp; European Premium Vehicles
+            </p>
+            <div className="hero-ref-subchips">
+              <span>Auto Electrical</span>
+              <span className="dot-sep">•</span>
+              <span>Scanning &amp; Coding</span>
+              <span className="dot-sep">•</span>
+              <span>Car AC Service</span>
+            </div>
+            <div className="hero-ref-loc-bar">
+              Mampad, PIN: 676542 • PH: 9567386024
+            </div>
           </div>
 
           <div className="hero-ref-btn-group">
-            <a href="#services" className="btn-hero-solid">
+            <button
+              type="button"
+              onClick={() => setCheckCarOpen(true)}
+              className="btn-hero-solid"
+              style={{ border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Car size={14} />
+              <span>CHECK CAR STATUS</span>
+            </button>
+            <a href="#services" className="btn-hero-outline">
               <span>OUR SERVICES</span>
             </a>
             <a href="#location" className="btn-hero-outline">
@@ -312,6 +476,227 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* CHECK CAR MODAL / POPUP: Only shows small input bar when "Check Car" is clicked */}
+      {checkCarOpen && (
+        <div className="check-car-modal-backdrop" onClick={() => setCheckCarOpen(false)}>
+          <div
+            className="check-car-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Close Button */}
+            <button
+              type="button"
+              className="modal-close-icon-btn"
+              onClick={() => setCheckCarOpen(false)}
+              aria-label="Close modal"
+              title="Close"
+            >
+              <X size={16} />
+            </button>
+
+            {/* Small Input Bar */}
+            <div className="modal-search-header">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleCheckCar();
+                }}
+                className="small-search-form"
+              >
+                <div className="small-input-row">
+                  <input
+                    type="text"
+                    className="small-car-input"
+                    placeholder="Car number (e.g. KL 10 AB 1234)..."
+                    value={carRegInput}
+                    onChange={(e) => {
+                      setCarRegInput(e.target.value.toUpperCase());
+                      if (searchError) setSearchError(null);
+                    }}
+                    autoFocus
+                    autoCapitalize="characters"
+                    autoCorrect="off"
+                    spellCheck="false"
+                  />
+                  {carRegInput && (
+                    <button
+                      type="button"
+                      onClick={() => setCarRegInput('')}
+                      className="small-input-clear-btn"
+                      title="Clear"
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    className="btn-small-check-car"
+                    disabled={searchLoading}
+                    aria-label="Check Car Status"
+                    title="Check Car Status"
+                  >
+                    {searchLoading ? (
+                      <Loader2 size={16} className="spin-loader" />
+                    ) : (
+                      <Search size={16} />
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              {/* Error Message */}
+              {searchError && (
+                <div className="check-car-error-card">
+                  <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <div style={{ flex: 1 }}>
+                    <div className="error-title">Vehicle Not Found</div>
+                    <div className="error-desc">{searchError}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* CLEAR VEHICLE & SERVICE DETAILS REPORT (No Icons / Clear Document Layout) */}
+            {carData && carData.car && (
+              <div className="clean-vehicle-report" id="check-car-results">
+                {/* Vehicle Title & Status */}
+                <div className="report-header">
+                  <div>
+                    <div className="report-reg-badge">{carData.car.registrationNumber}</div>
+                    <h3 className="report-car-title">
+                      {carData.car.carName} {carData.car.model ? `— ${carData.car.model}` : ''}
+                    </h3>
+                  </div>
+                  <div className="report-status-badge">
+                    {carData.currentStatus}
+                  </div>
+                </div>
+
+                {/* Key Vehicle Specifications Table */}
+                <div className="report-specs-table">
+                  <div className="report-spec-item">
+                    <span className="spec-item-label">Odometer:</span>
+                    <span className="spec-item-val">{carData.car.currentKm ? `${carData.car.currentKm.toLocaleString()} KM` : 'N/A'}</span>
+                  </div>
+                  <div className="report-spec-item">
+                    <span className="spec-item-label">Chassis / VIN:</span>
+                    <span className="spec-item-val">{carData.car.chassisNumber || 'OEM Verified'}</span>
+                  </div>
+                  <div className="report-spec-item">
+                    <span className="spec-item-label">Client Name:</span>
+                    <span className="spec-item-val">{carData.car.customerName}</span>
+                  </div>
+                  <div className="report-spec-item">
+                    <span className="spec-item-label">Total Visits:</span>
+                    <span className="spec-item-val">{carData.totalServices} {carData.totalServices === 1 ? 'Service' : 'Services'}</span>
+                  </div>
+                </div>
+
+                {/* Active Service (if currently ongoing) */}
+                {carData.activeService && (
+                  <div className="report-active-service">
+                    <div className="report-active-title">
+                      Active Job: {carData.activeService.serviceCode} ({carData.activeService.status})
+                    </div>
+                    <div className="report-active-row">
+                      <strong>Type:</strong> {carData.activeService.serviceType}
+                    </div>
+                    {carData.activeService.expectedDeliveryDate && (
+                      <div className="report-active-row">
+                        <strong>Est. Delivery:</strong> {formatDate(carData.activeService.expectedDeliveryDate)}
+                      </div>
+                    )}
+                    {carData.activeService.workDescription && (
+                      <div className="report-active-row">
+                        <strong>Work Scope:</strong> {carData.activeService.workDescription}
+                      </div>
+                    )}
+                    {carData.activeService.parts && (
+                      <div className="report-active-row">
+                        <strong>Components:</strong> {carData.activeService.parts}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Service History Records */}
+                <div className="report-history-wrap">
+                  <h4 className="report-history-title">
+                    Service History Records ({carData.serviceHistory?.length || 0})
+                  </h4>
+
+                  {carData.serviceHistory && carData.serviceHistory.length > 0 ? (
+                    <div className="report-history-entries">
+                      {carData.serviceHistory.map((srv, idx) => (
+                        <div key={srv.id || idx} className="report-entry-card">
+                          <div className="report-entry-top">
+                            <div className="report-entry-main">
+                              <span className="entry-date">{formatDate(srv.serviceDate)}</span>
+                              <span className="entry-sep">•</span>
+                              <span className="entry-code">{srv.serviceCode}</span>
+                              <span className="entry-sep">•</span>
+                              <span className="entry-type">{srv.serviceType}</span>
+                            </div>
+                            <span className="entry-status">{srv.status}</span>
+                          </div>
+
+                          <div className="report-entry-details">
+                            {srv.currentKm > 0 && (
+                              <div className="entry-detail-row">
+                                <span className="entry-label">Odometer:</span>
+                                <span>{srv.currentKm.toLocaleString()} KM</span>
+                              </div>
+                            )}
+                            {srv.workDescription && (
+                              <div className="entry-detail-row">
+                                <span className="entry-label">Work Done:</span>
+                                <span>{srv.workDescription}</span>
+                              </div>
+                            )}
+                            {srv.parts && (
+                              <div className="entry-detail-row">
+                                <span className="entry-label">Parts:</span>
+                                <span>{srv.parts}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="report-no-records">No prior service records recorded for this vehicle.</p>
+                  )}
+                </div>
+
+                {/* Footer Controls */}
+                <div className="report-footer-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCarData(null);
+                      setCarRegInput('');
+                    }}
+                    className="btn-check-another"
+                  >
+                    Check Another Vehicle
+                  </button>
+                  <a
+                    href={`https://wa.me/919567386024?text=${encodeURIComponent(
+                      `Hi DECODE Hub, I am inquiring regarding vehicle ${carData.car.carName} (${carData.car.registrationNumber}). Current status: ${carData.currentStatus}.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-whatsapp-action"
+                  >
+                    Contact Workshop
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 3 Core Highlight Pillars */}
       <section className="section scroll-fade" id="specialties">
@@ -378,6 +763,16 @@ export default function HomePage() {
                       </li>
                     ))}
                   </ul>
+                  {svc.isCheckupAction && (
+                    <button
+                      type="button"
+                      onClick={() => setCheckCarOpen(true)}
+                      className="btn-service-checkup"
+                    >
+                      <Car size={13} />
+                      <span>Check Vehicle Service Status</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -481,7 +876,8 @@ export default function HomePage() {
                     <div>
                       <div className="detail-label">Workshop Location</div>
                       <div className="detail-value">
-                        Mampad, Edakkara - Kalasagar,<br />
+                        DECODE AUTO DIAGNOSING HUB<br />
+                        Mampad, PIN Code: 676542<br />
                         Malappuram District, Kerala - India
                       </div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--red-bright)', marginTop: '0.2rem', fontFamily: 'var(--font-mono)' }}>
@@ -497,7 +893,7 @@ export default function HomePage() {
                     <div>
                       <div className="detail-label">Booking &amp; Assistance</div>
                       <div className="detail-value">
-                        <a href={`tel:${phoneNumber}`} style={{ color: '#fff' }}>
+                        <a href={`tel:${phoneNumber}`} style={{ color: 'var(--red-bright)', fontWeight: 600 }}>
                           +91 95673 86024
                         </a>
                       </div>
@@ -567,11 +963,23 @@ export default function HomePage() {
             <div>
               <div className="footer-col-title">Core Services</div>
               <ul className="footer-links">
-                <li><a href="#services" className="footer-link">Vehicle Programming &amp; Coding</a></li>
-                <li><a href="#services" className="footer-link">Auto Scanning &amp; Diagnostics</a></li>
-                <li><a href="#services" className="footer-link">Auto Electrical Systems</a></li>
-                <li><a href="#services" className="footer-link">Car AC &amp; Climate Service</a></li>
-                <li><a href="#services" className="footer-link">Genuine Used Spares</a></li>
+                <li><a href="#services" className="footer-link">Advanced Electrical &amp; Diagnostics</a></li>
+                <li><a href="#services" className="footer-link">Mechanical Care &amp; Engine Works</a></li>
+                <li><a href="#services" className="footer-link">AC &amp; Climate Control</a></li>
+                <li><a href="#services" className="footer-link">Periodic Maintenance Service (PMS)</a></li>
+                <li><a href="#services" className="footer-link">Performance &amp; Upgrades</a></li>
+                <li><a href="#services" className="footer-link">Accessories &amp; Upgrades</a></li>
+                <li><a href="#services" className="footer-link">Used Spares Sourcing &amp; Fitting</a></li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setCheckCarOpen(true)}
+                    className="footer-link"
+                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', color: 'var(--red-bright)', font: 'inherit' }}
+                  >
+                    Digital Service History &amp; Reminders
+                  </button>
+                </li>
               </ul>
             </div>
 
@@ -588,21 +996,22 @@ export default function HomePage() {
 
             <div>
               <div className="footer-col-title">Contact &amp; Location</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.78rem', color: '#9ca3af' }}>
                 <div>
-                  <strong style={{ color: '#fff' }}>Address:</strong><br />
-                  Edakkara - Kalasagar, Mampad,<br />
+                  <strong style={{ color: '#ffffff' }}>Address:</strong><br />
+                  DECODE AUTO DIAGNOSING HUB<br />
+                  Mampad, PIN Code: 676542<br />
                   Kerala, India
                 </div>
                 <div>
-                  <strong style={{ color: '#fff' }}>Phone / Booking:</strong><br />
-                  <a href={`tel:${phoneNumber}`} style={{ color: 'var(--red-bright)' }}>
-                    +91 95673 86024
+                  <strong style={{ color: '#ffffff' }}>Phone / Booking:</strong><br />
+                  <a href={`tel:${phoneNumber}`} style={{ color: 'var(--red-bright)', fontWeight: 600 }}>
+                    PH: 9567386024
                   </a>
                 </div>
                 <div>
-                  <strong style={{ color: '#fff' }}>Instagram:</strong><br />
-                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#fff' }}>
+                  <strong style={{ color: '#ffffff' }}>Instagram:</strong><br />
+                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#e5e7eb', fontWeight: 500 }}>
                     @de_code71
                   </a>
                 </div>
