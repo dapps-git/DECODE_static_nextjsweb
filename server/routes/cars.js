@@ -19,10 +19,10 @@ router.get('/public/status/:registrationNumber', async (req, res) => {
     }
 
     const cleanReg = rawReg.trim().toUpperCase();
-    // Match with flexible spacing e.g. "KL 10 AB 1234" vs "KL10AB1234"
-    const escaped = cleanReg.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const flexiblePattern = escaped.replace(/\s+/g, '\\s*');
-    const searchRegex = new RegExp('^' + flexiblePattern + '$', 'i');
+    // Match with flexible spacing e.g. "KL 65 4037" vs "KL654037" vs "KL-65-4037"
+    const alphaNum = cleanReg.replace(/[^A-Z0-9]/gi, '');
+    const flexiblePattern = alphaNum.split('').join('\\s*[-/]?\\s*');
+    const searchRegex = new RegExp('^\\s*[-/]?\\s*' + flexiblePattern + '\\s*[-/]?\\s*$', 'i');
 
     const car = await Car.findOne({ registrationNumber: { $regex: searchRegex } })
       .populate('customerId', 'name phone');

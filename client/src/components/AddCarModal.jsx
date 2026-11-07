@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import api from '../api/axios';
 import { Car, User, Plus } from 'lucide-react';
+import { formatVehiclePlate } from '../utils/formatPlate';
 
 export const AddCarModal = ({ isOpen, onClose, onSuccess, initialCustomerId = null }) => {
   const [mode, setMode] = useState('existing');
@@ -265,7 +266,7 @@ export const AddCarModal = ({ isOpen, onClose, onSuccess, initialCustomerId = nu
               <input
                 type="text"
                 value={registrationNumber}
-                onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase())}
+                onChange={(e) => setRegistrationNumber(formatVehiclePlate(e.target.value))}
                 placeholder="e.g. KL 07 AB 1234"
                 className="input-field uppercase font-mono font-bold text-blue-700"
                 required

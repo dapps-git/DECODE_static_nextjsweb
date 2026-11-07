@@ -11,8 +11,14 @@ export async function GET(request) {
     );
   }
 
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
-  const targetUrl = `${backendUrl}/api/cars/public/status/${encodeURIComponent(regNumber.trim())}`;
+  // Resolve backend URL with robust fallback to production cPanel API
+  const rawBackend = (
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    'https://tweaki.pw/decode_car'
+  ).replace(/\/+$/, '');
+  const backendUrl = rawBackend.endsWith('/api') ? rawBackend : `${rawBackend}/api`;
+  const targetUrl = `${backendUrl}/cars/public/status/${encodeURIComponent(regNumber.trim())}`;
 
   try {
     const res = await fetch(targetUrl, {
@@ -31,10 +37,9 @@ export async function GET(request) {
       {
         success: false,
         message:
-          'Unable to connect to service database. Please make sure the backend server is running on port 5000 or contact workshop support.',
+          'Unable to connect to service database. Please make sure the backend server is running or contact workshop support.',
       },
       { status: 503 }
     );
   }
 }
-

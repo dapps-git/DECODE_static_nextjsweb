@@ -32,6 +32,34 @@ import {
   FileText,
 } from 'lucide-react';
 
+// Auto-formats Indian vehicle registration numbers (Any state code, auto spacing & uppercase)
+function formatVehiclePlate(val) {
+  if (!val) return '';
+  const clean = val.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (!clean) return '';
+
+  // 1. Standard Indian: 2 Letters (State) + 1-2 Digits (RTO) + 0-3 Letters (Series) + 1-4 Digits (Number)
+  const standard = clean.match(/^([A-Z]{2})(\d{1,2})([A-Z]{0,3})(\d{0,4})$/);
+  if (standard) {
+    return [standard[1], standard[2], standard[3], standard[4]].filter(Boolean).join(' ');
+  }
+
+  // 2. Bharat (BH) Series: 2 Digits + "BH" + 4 Digits + 1-2 Letters
+  const bhMatch = clean.match(/^(\d{2})(BH)(\d{0,4})([A-Z]{0,2})$/);
+  if (bhMatch) {
+    return [bhMatch[1], bhMatch[2], bhMatch[3], bhMatch[4]].filter(Boolean).join(' ');
+  }
+
+  // 3. Partial progression while user is typing
+  if (/^[A-Z]{1,2}$/.test(clean)) return clean;
+  const partial = clean.match(/^([A-Z]{2})(\d+)(.*)$/);
+  if (partial) {
+    return [partial[1], partial[2], partial[3]].filter(Boolean).join(' ');
+  }
+
+  return clean;
+}
+
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -518,24 +546,14 @@ export default function HomePage() {
                     placeholder="Car number (e.g. KL 10 AB 1234)..."
                     value={carRegInput}
                     onChange={(e) => {
-                      setCarRegInput(e.target.value.toUpperCase());
+                      const formatted = formatVehiclePlate(e.target.value);
+                      setCarRegInput(formatted);
                       if (searchError) setSearchError(null);
                     }}
-                    autoFocus
                     autoCapitalize="characters"
                     autoCorrect="off"
                     spellCheck="false"
                   />
-                  {carRegInput && (
-                    <button
-                      type="button"
-                      onClick={() => setCarRegInput('')}
-                      className="small-input-clear-btn"
-                      title="Clear"
-                    >
-                      <X size={13} />
-                    </button>
-                  )}
                   <button
                     type="submit"
                     className="btn-small-check-car"
