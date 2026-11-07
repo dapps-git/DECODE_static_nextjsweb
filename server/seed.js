@@ -7,7 +7,9 @@ export async function seedDatabase() {
   try {
     // 1. Ensure primary DECODE administrator exists with bcrypt hashed password
     const adminEmail = (process.env.ADMIN_EMAIL || 'decode@service.com').toLowerCase().trim();
-    const adminPassword = process.env.ADMIN_PASSWORD || 'decode@#carservice';
+    const adminPasswordHash =
+      process.env.ADMIN_PASSWORD_HASH ||
+      '$2a$10$8WiTJzERHhhckQSyFkZGPOUWPt/APgXk9yGH3vC1N.UzQHC84m5eu';
 
     let admin = await User.findOne({ email: adminEmail });
     if (!admin) {
@@ -15,17 +17,16 @@ export async function seedDatabase() {
       admin = new User({
         name: 'DECODE Administrator',
         email: adminEmail,
-        password: adminPassword, // Will be securely hashed by User.js pre-save hook
+        password: adminPasswordHash,
         role: 'Admin',
       });
       await admin.save();
       console.log(`✅ DECODE Admin (${adminEmail}) successfully initialized with bcrypt hash.`);
     } else {
-      const match = await admin.comparePassword(adminPassword);
-      if (!match) {
-        admin.password = adminPassword;
+      if (admin.password !== adminPasswordHash) {
+        admin.password = adminPasswordHash;
         await admin.save();
-        console.log(`✅ DECODE Admin (${adminEmail}) password updated.`);
+        console.log(`✅ DECODE Admin (${adminEmail}) bcrypt hash synchronized from .env.`);
       }
     }
 
