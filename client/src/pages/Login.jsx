@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { Lock, Mail, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export const Login = () => {
-  const [email, setEmail] = useState('decode@service.com');
-  const [password, setPassword] = useState('decode@#carservice');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
