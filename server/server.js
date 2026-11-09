@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -11,7 +13,10 @@ import serviceRoutes from './routes/services.js';
 import userRoutes from './routes/users.js';
 import { seedDatabase } from './seed.js';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config(); // fallback to cwd
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,15 +54,20 @@ const apiHealthHandler = (req, res) => {
     status: 'ok',
     timestamp: new Date(),
     service: 'DECODE Car Service Center Management API',
+    dbConnected: mongoose.connection.readyState === 1,
+    dbState: ['disconnected', 'connected', 'connecting', 'disconnecting'][mongoose.connection.readyState] || 'unknown',
   });
 };
 
 app.get('/api/health', apiHealthHandler);
 app.get('/decode_car/api/health', apiHealthHandler);
 
+const DEFAULT_MONGODB_URI =
+  'mongodb+srv://decodetech37_db_user:zw2LqSLKH0pjiBxi@cluster0.uzddyrb.mongodb.net/decode_car_db?retryWrites=true&w=majority';
+
 // Database Connection with graceful fallback to MongoMemoryServer
 async function connectDB() {
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/decode_car_db';
+  const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
   try {
     await mongoose.connect(mongoUri, {
       dbName: 'decode_car_db',

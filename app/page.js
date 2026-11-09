@@ -413,13 +413,16 @@ export default function HomePage() {
 
           {/* Mobile Right Bar: Hamburger Toggle */}
           <div className="mobile-header-actions">
-            <a
-              href="#location"
-              onClick={() => setMobileMenuOpen(false)}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setCheckCarOpen(true);
+              }}
               className="nav-link-cta"
             >
               Check Car
-            </a>
+            </button>
             <button
               className="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
