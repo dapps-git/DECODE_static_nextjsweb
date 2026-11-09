@@ -1,8 +1,22 @@
 import axios from 'axios';
 
+// Resolve API base URL with production fallback to cPanel
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    const url = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+    return url.endsWith('/api') ? url : `${url}/api`;
+  }
+  // If running locally on localhost dev server, use port 5000
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return 'http://localhost:5000/api';
+  }
+  // Default for Vercel production: point directly to live cPanel backend
+  return 'https://tweaki.pw/decode_car/api';
+};
+
 // Create real Axios instance connecting to Express backend API
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
