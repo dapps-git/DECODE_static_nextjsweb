@@ -31,3 +31,4 @@ export function formatVehiclePlate(val) {
 
   return clean;
 }
+
