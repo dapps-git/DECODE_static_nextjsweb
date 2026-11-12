@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import authRoutes from './routes/auth.js';
 import customerRoutes from './routes/customers.js';
@@ -65,24 +64,16 @@ app.get('/decode_car/api/health', apiHealthHandler);
 const DEFAULT_MONGODB_URI =
   'mongodb+srv://decodetech37_db_user:zw2LqSLKH0pjiBxi@cluster0.uzddyrb.mongodb.net/decode_car_db?retryWrites=true&w=majority';
 
-// Database Connection with graceful fallback to MongoMemoryServer
+// Database Connection — Atlas only, no in-memory fallback
 async function connectDB() {
   const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
-  try {
-    await mongoose.connect(mongoUri, {
-      dbName: 'decode_car_db',
-      serverSelectionTimeoutMS: 10000,
-    });
-    const maskedUri = mongoUri.replace(/:([^:@]{3})[^:@]*@/, ':***@');
-    console.log(`🚀 Connected to MongoDB at ${maskedUri}`);
-  } catch (err) {
-    console.warn('⚠️ Remote/local MongoDB connection failed:', err.message);
-    console.warn('Starting embedded in-memory MongoDB server fallback...');
-    const mongod = await MongoMemoryServer.create();
-    const memUri = mongod.getUri();
-    await mongoose.connect(memUri, { dbName: 'decode_car_db' });
-    console.log(`🚀 Connected to In-Memory MongoDB at ${memUri}`);
-  }
+  await mongoose.connect(mongoUri, {
+    dbName: 'decode_car_db',
+    serverSelectionTimeoutMS: 15000,
+    socketTimeoutMS: 45000,
+  });
+  const maskedUri = mongoUri.replace(/:([^:@]{3})[^:@]*@/, ':***@');
+  console.log(`🚀 Connected to MongoDB at ${maskedUri}`);
 
   // Seed / ensure primary admin user decode@service.com exists
   await seedDatabase();
