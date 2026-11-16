@@ -34,20 +34,6 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database readiness check for API routes
-const checkDbReady = (req, res, next) => {
-  if (req.path.endsWith('/health')) return next();
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({
-      message: 'Database is currently connecting to MongoDB Atlas. Please retry in a few seconds.',
-      dbState: ['disconnected', 'connected', 'connecting', 'disconnecting'][mongoose.connection.readyState] || 'unknown',
-    });
-  }
-  next();
-};
-app.use('/api', checkDbReady);
-app.use('/decode_car/api', checkDbReady);
-
 // Routes (Support both direct /api and cPanel /decode_car/api mount paths)
 const apiRoutes = [
   { path: '/auth', router: authRoutes },
