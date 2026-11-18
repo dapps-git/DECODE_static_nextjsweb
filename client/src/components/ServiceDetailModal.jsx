@@ -133,12 +133,9 @@ export const ServiceDetailModal = ({
             if (partsItems.length === 0) return null;
             return (
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200">
-                <h5 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <Package className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Parts & Materials Replaced ({partsItems.length})</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-normal lowercase">Point-by-point</span>
+                <h5 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Package className="w-3.5 h-3.5 text-[#E50914]" />
+                  <span>Parts & Materials Replaced ({partsItems.length})</span>
                 </h5>
                 <ul className="divide-y divide-slate-200 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                   {partsItems.map((item, idx) => (

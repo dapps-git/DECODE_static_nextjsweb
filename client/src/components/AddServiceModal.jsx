@@ -377,22 +377,22 @@ export const AddServiceModal = ({
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                  <Package className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Parts & Components Used (Point by Point)</span>
+              <div className="flex items-center justify-between mb-1.5 gap-2">
+                <label className="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <Package className="w-3.5 h-3.5 text-[#E50914]" />
+                  <span>Parts & Components Used</span>
                 </label>
                 <button
                   type="button"
                   onClick={handleAddPart}
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#E50914] hover:text-[#C80813] bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-[#E50914] hover:bg-[#C80813] px-2.5 py-1 rounded-md transition-all shadow-xs shrink-0 whitespace-nowrap"
                 >
                   <Plus className="w-3 h-3" />
-                  <span>+ Add Part Item</span>
+                  <span>Add Item</span>
                 </button>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 {partsList.map((part, index) => {
                   const partKey = part.id !== undefined ? part.id : index;
                   return (
@@ -400,7 +400,7 @@ export const AddServiceModal = ({
                       key={partKey}
                       className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-white rounded-xl border border-slate-200 shadow-sm"
                     >
-                      <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold flex items-center justify-center shrink-0">
+                      <span className="w-5 h-5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                         {index + 1}
                       </span>
                       <input
@@ -410,17 +410,17 @@ export const AddServiceModal = ({
                         placeholder="Part name (e.g. Synthetic Oil 7L, Brake Pads)"
                         className="input-field text-xs flex-1 py-1 sm:py-1.5"
                       />
-                      <div className="relative w-24 sm:w-32 shrink-0">
-                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-mono">
+                      <div className="relative w-24 sm:w-28 shrink-0">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-mono pointer-events-none">
                           ₹
                         </span>
                         <input
                           type="number"
                           value={part.price}
                           onChange={(e) => handlePartChange(partKey, 'price', e.target.value)}
-                          placeholder="Price (opt)"
+                          placeholder="Price"
                           min="0"
-                          className="input-field text-xs pl-5 sm:pl-6 pr-1.5 py-1 sm:py-1.5 font-mono"
+                          className="input-field text-xs pl-5 sm:pl-5 pr-1.5 py-1 sm:py-1.5 font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           title="Optional price (Visible in admin only; never shown to customers)"
                         />
                       </div>
@@ -436,22 +436,21 @@ export const AddServiceModal = ({
                   );
                 })}
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-1 text-[11px] text-slate-500">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-0.5 text-[11px] text-slate-500">
                   <button
                     type="button"
                     onClick={handleAddPart}
-                    className="inline-flex items-center gap-1 font-bold text-[#E50914] hover:text-[#C80813] transition-colors self-start"
+                    className="inline-flex items-center gap-1 font-semibold text-[#E50914] hover:text-[#C80813] transition-colors self-start"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add another part item</span>
+                    <Plus className="w-3 h-3" />
+                    <span>Add Item</span>
                   </button>
                   {partsTotalFromItems > 0 && (
-                    <span className="font-medium text-slate-600">
-                      Itemized Parts Total:{' '}
+                    <span className="font-medium text-slate-600 text-[11px]">
+                      Parts Total:{' '}
                       <strong className="font-mono text-slate-900 font-bold">
                         ₹{partsTotalFromItems.toLocaleString()}
-                      </strong>{' '}
-                      <span className="text-slate-400 text-[10px]">(auto-syncs to Parts Cost below)</span>
+                      </strong>
                     </span>
                   )}
                 </div>

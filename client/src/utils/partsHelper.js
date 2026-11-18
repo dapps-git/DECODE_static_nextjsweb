@@ -100,3 +100,4 @@ export function calculatePartsTotal(partsList) {
     return !isNaN(val) && val > 0 ? acc + val : acc;
   }, 0);
 }
+
