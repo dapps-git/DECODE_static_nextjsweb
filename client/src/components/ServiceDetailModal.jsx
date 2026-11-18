@@ -14,6 +14,7 @@ import {
   DollarSign,
   Package,
 } from 'lucide-react';
+import { parsePartsList } from '../utils/partsHelper';
 
 export const ServiceDetailModal = ({
   isOpen,
@@ -127,17 +128,39 @@ export const ServiceDetailModal = ({
             </p>
           </div>
 
-          {service.parts && (
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <h5 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5 text-blue-600" />
-                Parts & Materials Replaced
-              </h5>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line font-medium">
-                {service.parts}
-              </p>
-            </div>
-          )}
+          {(() => {
+            const partsItems = parsePartsList(service.parts);
+            if (partsItems.length === 0) return null;
+            return (
+              <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200">
+                <h5 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Package className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Parts & Materials Replaced ({partsItems.length})</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal lowercase">Point-by-point</span>
+                </h5>
+                <ul className="divide-y divide-slate-200 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                  {partsItems.map((item, idx) => (
+                    <li
+                      key={idx}
+                      className="px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center justify-between gap-3 text-xs sm:text-[13px]"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#E50914] shrink-0" />
+                        <span className="font-semibold text-slate-800 break-words">{item.name}</span>
+                      </div>
+                      {item.price !== '' && item.price !== null && item.price !== undefined && (
+                        <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">
+                          ₹{Number(item.price).toLocaleString()}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })()}
 
           {service.notes && (
             <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">

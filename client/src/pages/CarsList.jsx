@@ -129,10 +129,10 @@ export const CarsList = () => {
 
         <button
           onClick={() => onOpenAddCar?.()}
-          className="btn-primary self-start sm:self-auto py-2.5 px-4 shadow-sm"
+          className="btn-primary self-start sm:self-auto py-2 px-3 sm:py-2.5 sm:px-4 text-xs sm:text-[13px] shadow-sm"
         >
-          <Plus className="w-4 h-4" />
-          <span>{isCustomersView ? '+ Add Customer & Car' : '+ Add New Vehicle'}</span>
+          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>{isCustomersView ? '+ Add Client & Car' : '+ Add Vehicle'}</span>
         </button>
       </div>
 

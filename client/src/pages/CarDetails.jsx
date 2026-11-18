@@ -7,6 +7,7 @@ import { AddServiceModal } from '../components/AddServiceModal';
 import { ServiceDetailModal } from '../components/ServiceDetailModal';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Modal } from '../components/Modal';
+import { parsePartsList } from '../utils/partsHelper';
 import {
   Car,
   User,
@@ -159,29 +160,29 @@ export const CarDetails = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Back button and page navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <button
           onClick={() => navigate('/cars')}
-          className="btn-ghost text-[13px] flex items-center gap-1.5 pl-1 font-semibold"
+          className="btn-ghost text-xs sm:text-[13px] flex items-center gap-1 sm:gap-1.5 pl-0.5 font-semibold"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Registry</span>
+          <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>Back</span>
         </button>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setIsEditCarOpen(true)}
-            className="btn-secondary text-[13px] py-1.5 px-3.5 flex items-center gap-1.5 font-semibold"
+            className="btn-secondary text-xs sm:text-[13px] py-1.5 px-2.5 sm:px-3.5 flex items-center gap-1 sm:gap-1.5 font-semibold"
           >
-            <Edit className="w-3.5 h-3.5 text-[#667085]" />
-            <span>Edit Vehicle</span>
+            <Edit className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#667085]" />
+            <span>Edit</span>
           </button>
           <button
             onClick={() => setIsAddServiceOpen(true)}
-            className="btn-primary text-[13px] py-1.5 px-4 flex items-center gap-1.5 font-semibold"
+            className="btn-primary text-xs sm:text-[13px] py-1.5 px-3 sm:px-4 flex items-center gap-1 sm:gap-1.5 font-semibold"
           >
-            <Plus className="w-4 h-4" />
-            <span>+ Record Service</span>
+            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span>+ Service</span>
           </button>
         </div>
       </div>
@@ -418,12 +419,30 @@ export const CarDetails = () => {
                       </p>
                     )}
 
-                    {service.parts && (
-                      <div className="bg-[#F5F7FA] p-2.5 rounded-lg border border-[#E2E8F0] text-[12px] text-[#667085]">
-                        <span className="text-[#1677C8] font-bold mr-1.5">Parts Replaced:</span>
-                        {service.parts}
-                      </div>
-                    )}
+                    {(() => {
+                      const items = parsePartsList(service.parts);
+                      if (items.length === 0) return null;
+                      return (
+                        <div className="bg-[#F8FAFC] p-2.5 rounded-lg border border-[#E2E8F0] text-[12px]">
+                          <span className="text-[#0F172A] font-bold block mb-1">Parts & Components Used:</span>
+                          <ul className="space-y-1">
+                            {items.map((it, idx) => (
+                              <li key={idx} className="flex items-center justify-between text-[#334155] text-xs">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#E50914] shrink-0" />
+                                  <span>{it.name}</span>
+                                </div>
+                                {it.price !== '' && it.price !== null && it.price !== undefined && (
+                                  <span className="font-mono text-[11px] font-bold text-[#64748B] bg-white px-1.5 py-0.5 rounded border border-[#E2E8F0]">
+                                    ₹{Number(it.price).toLocaleString()}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Card Footer */}

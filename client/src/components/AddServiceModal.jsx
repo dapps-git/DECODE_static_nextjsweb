@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import api from '../api/axios';
-import { Wrench, DollarSign, Calendar, FileText } from 'lucide-react';
+import { Wrench, DollarSign, Calendar, FileText, Plus, Trash2, Package } from 'lucide-react';
+import { parsePartsList, serializePartsList, calculatePartsTotal } from '../utils/partsHelper';
 
 export const AddServiceModal = ({
   isOpen,
@@ -20,7 +21,7 @@ export const AddServiceModal = ({
   const [status, setStatus] = useState('Pending');
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState('');
   const [workDescription, setWorkDescription] = useState('');
-  const [parts, setParts] = useState('');
+  const [partsList, setPartsList] = useState([{ id: 1, name: '', price: '' }]);
   const [labourCost, setLabourCost] = useState('');
   const [partsCost, setPartsCost] = useState('');
   const [totalCost, setTotalCost] = useState('');
@@ -60,7 +61,8 @@ export const AddServiceModal = ({
             : ''
         );
         setWorkDescription(editService.workDescription || '');
-        setParts(editService.parts || '');
+        const parsed = parsePartsList(editService.parts);
+        setPartsList(parsed.length > 0 ? parsed : [{ id: 1, name: '', price: '' }]);
         setLabourCost(editService.labourCost || '');
         setPartsCost(editService.partsCost || '');
         setTotalCost(editService.totalCost || '');
@@ -97,6 +99,52 @@ export const AddServiceModal = ({
     setTotalCost(l + p);
   };
 
+  const handleAddPart = () => {
+    setPartsList((prev) => [
+      ...prev,
+      { id: Date.now() + Math.random(), name: '', price: '' },
+    ]);
+  };
+
+  const handleRemovePart = (targetId) => {
+    setPartsList((prev) => {
+      const updated = prev.filter((p, idx) => (p.id !== undefined ? p.id : idx) !== targetId);
+      const nextList = updated.length > 0 ? updated : [{ id: Date.now(), name: '', price: '' }];
+      const sum = calculatePartsTotal(nextList);
+      if (sum > 0) {
+        setPartsCost(sum);
+        const l = Number(labourCost) || 0;
+        setTotalCost(l + sum);
+      }
+      return nextList;
+    });
+  };
+
+  const handlePartChange = (targetId, field, val) => {
+    setPartsList((prev) => {
+      const updated = prev.map((p, idx) => {
+        const pId = p.id !== undefined ? p.id : idx;
+        if (pId === targetId) {
+          return { ...p, [field]: val };
+        }
+        return p;
+      });
+
+      if (field === 'price') {
+        const sum = calculatePartsTotal(updated);
+        if (sum > 0) {
+          setPartsCost(sum);
+          const l = Number(labourCost) || 0;
+          setTotalCost(l + sum);
+        }
+      }
+
+      return updated;
+    });
+  };
+
+  const partsTotalFromItems = calculatePartsTotal(partsList);
+
   const fetchCars = async () => {
     try {
       const res = await api.get('/cars');
@@ -118,7 +166,7 @@ export const AddServiceModal = ({
     setStatus('Pending');
     setExpectedDeliveryDate('');
     setWorkDescription('');
-    setParts('');
+    setPartsList([{ id: 1, name: '', price: '' }]);
     setLabourCost('');
     setPartsCost('');
     setTotalCost('');
@@ -151,7 +199,7 @@ export const AddServiceModal = ({
         status,
         expectedDeliveryDate: expectedDeliveryDate || null,
         workDescription,
-        parts,
+        parts: serializePartsList(partsList),
         labourCost: Number(labourCost) || 0,
         partsCost: Number(partsCost) || 0,
         totalCost: Number(totalCost) || (Number(labourCost) || 0) + (Number(partsCost) || 0),
@@ -329,16 +377,85 @@ export const AddServiceModal = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">
-                Parts / Items Used
-              </label>
-              <textarea
-                value={parts}
-                onChange={(e) => setParts(e.target.value)}
-                placeholder="e.g. Synthetic Oil (7L), Ceramic Brake Pads, Oil Filter, Spark Plugs"
-                rows="2"
-                className="input-field resize-none"
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                  <Package className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Parts & Components Used (Point by Point)</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddPart}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#E50914] hover:text-[#C80813] bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-lg transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>+ Add Part Item</span>
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {partsList.map((part, index) => {
+                  const partKey = part.id !== undefined ? part.id : index;
+                  return (
+                    <div
+                      key={partKey}
+                      className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-white rounded-xl border border-slate-200 shadow-sm"
+                    >
+                      <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold flex items-center justify-center shrink-0">
+                        {index + 1}
+                      </span>
+                      <input
+                        type="text"
+                        value={part.name}
+                        onChange={(e) => handlePartChange(partKey, 'name', e.target.value)}
+                        placeholder="Part name (e.g. Synthetic Oil 7L, Brake Pads)"
+                        className="input-field text-xs flex-1 py-1 sm:py-1.5"
+                      />
+                      <div className="relative w-24 sm:w-32 shrink-0">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-mono">
+                          ₹
+                        </span>
+                        <input
+                          type="number"
+                          value={part.price}
+                          onChange={(e) => handlePartChange(partKey, 'price', e.target.value)}
+                          placeholder="Price (opt)"
+                          min="0"
+                          className="input-field text-xs pl-5 sm:pl-6 pr-1.5 py-1 sm:py-1.5 font-mono"
+                          title="Optional price (Visible in admin only; never shown to customers)"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePart(partKey)}
+                        className="p-1 sm:p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors shrink-0"
+                        title="Remove part"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-1 text-[11px] text-slate-500">
+                  <button
+                    type="button"
+                    onClick={handleAddPart}
+                    className="inline-flex items-center gap-1 font-bold text-[#E50914] hover:text-[#C80813] transition-colors self-start"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add another part item</span>
+                  </button>
+                  {partsTotalFromItems > 0 && (
+                    <span className="font-medium text-slate-600">
+                      Itemized Parts Total:{' '}
+                      <strong className="font-mono text-slate-900 font-bold">
+                        ₹{partsTotalFromItems.toLocaleString()}
+                      </strong>{' '}
+                      <span className="text-slate-400 text-[10px]">(auto-syncs to Parts Cost below)</span>
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div>

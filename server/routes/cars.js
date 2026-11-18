@@ -56,6 +56,41 @@ router.get('/public/status/:registrationNumber', async (req, res) => {
       return str.slice(0, 3) + ' •••• ' + str.slice(-4);
     };
 
+    // Format parts point-by-point for customer view without ANY prices
+    const formatPublicParts = (partsData) => {
+      if (!partsData) return [];
+      if (Array.isArray(partsData)) {
+        return partsData
+          .map((p) => (typeof p === 'string' ? p.trim() : p?.name ? String(p.name).trim() : ''))
+          .filter(Boolean);
+      }
+      if (typeof partsData !== 'string') return [];
+      const trimmed = partsData.trim();
+      if (!trimmed) return [];
+
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed
+              .map((item) => {
+                if (typeof item === 'string') return item.trim();
+                return item && item.name ? String(item.name).trim() : '';
+              })
+              .filter(Boolean);
+          }
+        } catch {
+          // fallback
+        }
+      }
+
+      return trimmed
+        .split(/\r?\n/)
+        .flatMap((line) => line.split(/[,;]/))
+        .map((l) => l.replace(/^[•\-\*\d\.\)\s]+/, '').trim())
+        .filter(Boolean);
+    };
+
     return res.json({
       success: true,
       car: {
@@ -78,7 +113,7 @@ router.get('/public/status/:registrationNumber', async (req, res) => {
             serviceDate: activeService.serviceDate,
             expectedDeliveryDate: activeService.expectedDeliveryDate,
             workDescription: activeService.workDescription,
-            parts: activeService.parts,
+            parts: formatPublicParts(activeService.parts),
           }
         : null,
       serviceHistory: services.map((s) => ({
@@ -90,7 +125,7 @@ router.get('/public/status/:registrationNumber', async (req, res) => {
         currentKm: s.currentKm,
         expectedDeliveryDate: s.expectedDeliveryDate,
         workDescription: s.workDescription,
-        parts: s.parts,
+        parts: formatPublicParts(s.parts),
         totalCost: s.totalCost || 0,
       })),
       totalServices: services.length,

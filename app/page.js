@@ -60,6 +60,45 @@ function formatVehiclePlate(val) {
   return clean;
 }
 
+// Parse parts for customer view: point-by-point, strictly without prices
+function parseCustomerParts(partsData) {
+  if (!partsData) return [];
+  if (Array.isArray(partsData)) {
+    return partsData
+      .map((p) => {
+        if (!p) return '';
+        if (typeof p === 'string') return p.trim();
+        return p.name ? String(p.name).trim() : '';
+      })
+      .filter(Boolean);
+  }
+  if (typeof partsData !== 'string') return [];
+  const trimmed = partsData.trim();
+  if (!trimmed) return [];
+
+  // JSON Array string
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((item) => {
+            if (typeof item === 'string') return item.trim();
+            return item && item.name ? String(item.name).trim() : '';
+          })
+          .filter(Boolean);
+      }
+    } catch {}
+  }
+
+  // Comma or newline separated
+  return trimmed
+    .split(/\r?\n/)
+    .flatMap((line) => line.split(/[,;]/))
+    .map((l) => l.replace(/^[•\-\*\d\.\)\s]+/, '').trim())
+    .filter(Boolean);
+}
+
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -640,11 +679,23 @@ export default function HomePage() {
                         <strong>Work Scope:</strong> {carData.activeService.workDescription}
                       </div>
                     )}
-                    {carData.activeService.parts && (
-                      <div className="report-active-row">
-                        <strong>Components:</strong> {carData.activeService.parts}
-                      </div>
-                    )}
+                    {(() => {
+                      const activeParts = parseCustomerParts(carData.activeService.parts);
+                      if (activeParts.length === 0) return null;
+                      return (
+                        <div className="report-active-row parts-point-row">
+                          <strong>Components / Parts:</strong>
+                          <ul className="parts-point-list">
+                            {activeParts.map((pt, pIdx) => (
+                              <li key={pIdx} className="parts-point-item">
+                                <span className="parts-bullet">•</span>
+                                <span>{pt}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
 
@@ -682,12 +733,23 @@ export default function HomePage() {
                                 <span>{srv.workDescription}</span>
                               </div>
                             )}
-                            {srv.parts && (
-                              <div className="entry-detail-row">
-                                <span className="entry-label">Parts:</span>
-                                <span>{srv.parts}</span>
-                              </div>
-                            )}
+                            {(() => {
+                              const srvParts = parseCustomerParts(srv.parts);
+                              if (srvParts.length === 0) return null;
+                              return (
+                                <div className="entry-detail-row parts-point-row">
+                                  <span className="entry-label">Parts Used:</span>
+                                  <ul className="parts-point-list">
+                                    {srvParts.map((pt, pIdx) => (
+                                      <li key={pIdx} className="parts-point-item">
+                                        <span className="parts-bullet">•</span>
+                                        <span>{pt}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
                       ))}

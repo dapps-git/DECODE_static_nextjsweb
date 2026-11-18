@@ -2278,6 +2278,51 @@ a {
   margin-right: 0.35rem;
 }
 
+/* Parts Point-by-Point List on Customer Report */
+.parts-point-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.parts-point-row strong,
+.parts-point-row .entry-label {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.15rem;
+}
+
+.parts-point-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.parts-point-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: #1e293b;
+  line-height: 1.4;
+  padding: 0.25rem 0.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+.parts-point-item .parts-bullet {
+  color: #e61e2a;
+  font-weight: 900;
+  font-size: 0.9rem;
+  line-height: 1;
+  margin-top: 1px;
+}
+
 .report-no-records {
   font-size: 0.8rem;
   color: #64748b;
